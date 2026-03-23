@@ -27,7 +27,9 @@ def main():
 @click.option("--output", "-o", type=click.Path(), default=None, help="Save JSON report to file.")
 @click.option("--html", "html_output", type=click.Path(), default=None, help="Save HTML dashboard to file.")
 @click.option("--lang", default="es", show_default=True, type=click.Choice(["es", "en"]), help="Language for affection analysis.")
-def analyze(path: str, name: str, output: str | None, html_output: str | None, lang: str):
+@click.option("--ai", "ai_provider", default=None, type=click.Choice(["openai", "anthropic"]), help="Start an AI conversation after analysis (requires API key in env).")
+@click.option("--model", default=None, help="Override the AI model (e.g. gpt-4o, claude-opus-4-5).")
+def analyze(path: str, name: str, output: str | None, html_output: str | None, lang: str, ai_provider: str | None, model: str | None):
     """Analyze a WhatsApp .txt export or folder of exports."""
     from chatself.parsers.txt_parser import TxtParser
     from chatself.analytics.patterns import PatternAnalyzer
@@ -73,6 +75,61 @@ def analyze(path: str, name: str, output: str | None, html_output: str | None, l
         out_path = ReportBuilder(chat, name, lang).save(html_output)
         console.print(f"[green]HTML dashboard saved to {out_path}[/green]")
         console.print(f"[dim]Open in browser: file:///{out_path.resolve()}[/dim]")
+
+
+    if ai_provider:
+        _run_ai_session(chat, name, patterns, vocab, relations, ai_provider, model)
+
+
+def _run_ai_session(chat, my_name, patterns, vocab, relations, provider, model):
+    from chatself.ai.context import build_context
+    from chatself.ai.session import AISession
+    from chatself.analytics.emojis import EmojiAnalyzer
+
+    emojis = EmojiAnalyzer(chat, my_name)
+    context = build_context(chat.name, my_name, patterns, vocab, relations, emojis)
+
+    try:
+        session = AISession(context, provider=provider, model=model)
+    except Exception as e:
+        console.print(f"\n[red]Could not start AI session: {e}[/red]")
+        if provider == 'openai':
+            console.print("[dim]  pip install openai && set OPENAI_API_KEY=sk-...[/dim]")
+        else:
+            console.print("[dim]  pip install anthropic && set ANTHROPIC_API_KEY=sk-ant-...[/dim]")
+        return
+
+    console.print(Panel(
+        f"[bold green]AI session started[/bold green] · provider: [cyan]{provider}[/cyan] · model: [cyan]{session.model}[/cyan]\n"
+        f"[dim]Raw messages are NOT sent. Only pre-computed stats.[/dim]\n"
+        f"[dim]Type [bold]exit[/bold] to stop. [bold]reset[/bold] to clear history.[/dim]",
+        title="🤖 chatself AI",
+    ))
+
+    while True:
+        try:
+            user_input = console.input("\n[bold cyan]You:[/bold cyan] ").strip()
+        except (EOFError, KeyboardInterrupt):
+            console.print("\n[dim]Session ended.[/dim]")
+            break
+
+        if not user_input:
+            continue
+        if user_input.lower() in ('exit', 'quit', 'q'):
+            console.print("[dim]Goodbye.[/dim]")
+            break
+        if user_input.lower() == 'reset':
+            session.reset()
+            console.print("[dim]History cleared.[/dim]")
+            continue
+
+        console.print("\n[bold green]AI:[/bold green] ", end="")
+        try:
+            for chunk in session.stream(user_input):
+                console.print(chunk, end="", highlight=False)
+            console.print()
+        except Exception as e:
+            console.print(f"\n[red]Error: {e}[/red]")
 
 
 @main.command()
