@@ -4,7 +4,9 @@
 ![PyPI](https://img.shields.io/pypi/v/chatself)
 ![python](https://img.shields.io/pypi/pyversions/chatself)
 
-I had 5 years of WhatsApp conversations sitting on my phone and realized I had no idea what was actually in them. Not the events — I remembered those. But the *patterns*. Who I was at 2am. How I talked to people I was in love with. Whether I'd changed at all.
+**[→ Live sample report](https://khavel.github.io/chatself/)**
+
+I had 5 years of WhatsApp conversationssitting on my phone and realized I had no idea what was actually in them. Not the events — I remembered those. But the *patterns*. Who I was at 2am. How I talked to people I was in love with. Whether I'd changed at all.
 
 So I built this.
 
