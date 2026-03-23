@@ -87,10 +87,10 @@ def build_context(
         early = drift[:3]
         late  = drift[-3:]
         lines.append(
-            f"Message ratio early in relationship: {[d['ratio'] for d in early]}"
+            f"Your message % early in relationship: {[d.get('my_pct', d.get('ratio', '?')) for d in early]}"
         )
         lines.append(
-            f"Message ratio recently: {[d['ratio'] for d in late]}"
+            f"Your message % recently: {[d.get('my_pct', d.get('ratio', '?')) for d in late]}"
         )
 
     gaps = r.get("silence_gaps", [])[:5]
