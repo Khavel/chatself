@@ -21,6 +21,8 @@ my_exports/
 # Reports with personal data
 report.json
 *.report.json
+examples/report_*.html
+examples/report_*.json
 
 # OS
 .DS_Store
