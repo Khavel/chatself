@@ -1,0 +1,32 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.env
+
+# WhatsApp data — never commit real chats
+*.db
+*.crypt*
+*.txt.export
+standalone/
+exports/
+my_exports/
+
+# Reports with personal data
+report.json
+*.report.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
