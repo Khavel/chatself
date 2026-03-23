@@ -1,105 +1,80 @@
 # chatself 🪞
 
-> *Know yourself through your conversations.*
+![tests](https://github.com/Khavel/chatself/actions/workflows/tests.yml/badge.svg)
+![PyPI](https://img.shields.io/pypi/v/chatself)
+![python](https://img.shields.io/pypi/pyversions/chatself)
 
-**chatself** is an open-source tool that turns your WhatsApp chat history into a personal mirror — revealing your communication patterns, relationship dynamics, emotional evolution, and the person you've become over the years.
+I had 5 years of WhatsApp conversations sitting on my phone and realized I had no idea what was actually in them. Not the events — I remembered those. But the *patterns*. Who I was at 2am. How I talked to people I was in love with. Whether I'd changed at all.
 
----
-
-## What you'll discover
-
-- **Your verbal tics** — the phrases and words you repeat without noticing
-- **Your emoji & sticker signature** — what you reach for when words aren't enough
-- **Relationship dynamics** — who initiates, who responds, who's drifting
-- **Your evolution year by year** — how your language, habits, and circle have changed
-- **The conversations that shaped you** — key moments hidden in plain sight
+So I built this.
 
 ---
 
-## Quickstart
+## What it does
 
-### 1. Export your WhatsApp chats
+Parses your exported WhatsApp chats and tells you things like:
 
-On your phone: **Settings → Chats → Export chat → Without media**
+- words and phrases you repeat without noticing
+- who always writes first (you or them)
+- how the balance shifted over months
+- your emoji signature
+- the longest silences, and who broke them
+- how your vocabulary changed year to year
 
-Send yourself the `.txt` files for the conversations you want to analyze.
+Optional: plug in an OpenAI or Anthropic key and have a conversation about what it all means.
 
-### 2. Install
+---
+
+## Install
 
 ```bash
 pip install chatself
-```
-
-Or from source:
-
-```bash
-git clone https://github.com/yourusername/chatself
-cd chatself
-pip install -e .
-```
-
-### 3. Analyze
-
-```bash
-# Analyze a single exported chat
-chatself analyze chat_with_Ana.txt
-
-# Analyze a folder of exports
-chatself analyze ./my_exports/
-
-# Full interactive session (requires OpenAI or Anthropic API key)
-chatself reflect ./my_exports/ --ai
+# with AI support:
+pip install "chatself[ai]"
 ```
 
 ---
 
-## Advanced: Full history from Android backup
+## Usage
 
-If you want your **complete history** (all chats, all years), chatself supports the decrypted WhatsApp SQLite database (`msgstore.db`).
+Export a chat from WhatsApp: **Settings → Chats → Export chat → Without media**
 
-See [docs/full-history.md](docs/full-history.md) for the step-by-step guide.
+```bash
+# single chat
+chatself analyze "Chat with Ana.txt" --name Ana
+
+# whole folder
+chatself analyze ./exports/ --name Ana
+
+# save an HTML report
+chatself analyze "Chat with Ana.txt" --name Ana --html report.html
+
+# talk to an AI about it (needs ANTHROPIC_API_KEY or OPENAI_API_KEY)
+chatself analyze "Chat with Ana.txt" --name Ana --ai anthropic
+```
+
+The `--ai` flag sends only pre-computed stats to the LLM — not your actual messages.
+
+---
+
+## Full history (Android)
+
+If you want everything, not just one export, you can use the decrypted `msgstore.db` from your Android backup. chatself includes a `DbParser` for that. Instructions coming in the wiki.
 
 ---
 
 ## Privacy
 
-**Your data never leaves your machine** unless you explicitly use the `--ai` flag (which sends anonymized summaries — never raw messages — to the LLM API of your choice).
-
-All processing is local. No accounts. No telemetry.
-
----
-
-## Output
-
-chatself produces:
-
-| Output | Description |
-|--------|-------------|
-| `report.json` | Full structured analysis |
-| `report.html` | Visual dashboard (open in browser) |
-| Interactive CLI | Ask questions about yourself |
-
----
-
-## Modules
-
-| Module | What it does |
-|--------|-------------|
-| `parsers` | Parse WhatsApp `.txt` exports and `msgstore.db` |
-| `analytics.patterns` | Activity hours, response times, message ratios |
-| `analytics.vocabulary` | Verbal tics, n-grams, language evolution |
-| `analytics.emojis` | Emoji frequency, context, signature |
-| `analytics.relationships` | Balance, asymmetry, drift over time |
-| `analytics.timeline` | Year-by-year personal evolution |
+Everything runs locally. No accounts, no telemetry, no cloud.
+The only exception is `--ai`, which sends anonymized summaries (word frequencies, ratios, timestamps) to the API you choose.
 
 ---
 
 ## Contributing
 
-PRs welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Open issues, send PRs. The codebase is small and straightforward — parsers, analyzers, a CLI, an HTML builder.
 
 ---
 
-## License
-
 MIT
+
