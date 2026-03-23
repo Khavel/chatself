@@ -25,8 +25,9 @@ def main():
 @click.argument("path", type=click.Path(exists=True))
 @click.option("--name", "-n", prompt="Your name in the chat", help="Your display name as it appears in the export.")
 @click.option("--output", "-o", type=click.Path(), default=None, help="Save JSON report to file.")
+@click.option("--html", "html_output", type=click.Path(), default=None, help="Save HTML dashboard to file.")
 @click.option("--lang", default="es", show_default=True, type=click.Choice(["es", "en"]), help="Language for affection analysis.")
-def analyze(path: str, name: str, output: str | None, lang: str):
+def analyze(path: str, name: str, output: str | None, html_output: str | None, lang: str):
     """Analyze a WhatsApp .txt export or folder of exports."""
     from chatself.parsers.txt_parser import TxtParser
     from chatself.analytics.patterns import PatternAnalyzer
@@ -39,7 +40,6 @@ def analyze(path: str, name: str, output: str | None, lang: str):
     if p.is_dir():
         chats = parser.parse_directory(p)
         console.print(f"[green]Loaded {len(chats)} chats from {p}[/green]")
-        # For multi-chat, run timeline analysis
         _print_multi_chat_summary(chats, name)
         if output:
             _save_json([{"chat": c.name, "messages": len(c.messages)} for c in chats], output)
@@ -66,7 +66,13 @@ def analyze(path: str, name: str, output: str | None, lang: str):
             "relationships": relations.summary(),
         }
         _save_json(report, output)
-        console.print(f"\n[green]Report saved to {output}[/green]")
+        console.print(f"\n[green]JSON saved to {output}[/green]")
+
+    if html_output:
+        from chatself.report.builder import ReportBuilder
+        out_path = ReportBuilder(chat, name, lang).save(html_output)
+        console.print(f"[green]HTML dashboard saved to {out_path}[/green]")
+        console.print(f"[dim]Open in browser: file:///{out_path.resolve()}[/dim]")
 
 
 @main.command()
