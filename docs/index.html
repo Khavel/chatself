@@ -4,121 +4,383 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>chatself — demo_chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --bg: #0f0f13; --surface: #1a1a24; --border: #2a2a3a;
-    --accent: #7c6af7; --accent2: #f76a8a; --text: #e8e8f0; --muted: #888;
-    --green: #4ade80; --yellow: #fbbf24;
+    --bg: #080810;
+    --surface: #12121e;
+    --surface2: #1a1a2e;
+    --border: #ffffff0f;
+    --border2: #ffffff18;
+    --accent: #7c6af7;
+    --accent2: #f76a8a;
+    --accent3: #38bdf8;
+    --text: #f0f0fa;
+    --muted: #6b6b8a;
+    --muted2: #9090b0;
+    --green: #4ade80;
+    --purple-glow: rgba(124,106,247,0.15);
+    --pink-glow: rgba(247,106,138,0.12);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; padding: 2rem; }
-  h1 { font-size: 2rem; font-weight: 700; }
-  h2 { font-size: 1.1rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 1rem; }
-  .subtitle { color: var(--muted); margin-top: .3rem; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; margin: 2rem 0; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; }
-  .stat { font-size: 2.4rem; font-weight: 700; color: var(--accent); }
-  .stat-label { color: var(--muted); font-size: .85rem; margin-top: .2rem; }
-  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; margin-bottom: 1.2rem; }
-  .chart-wrap { position: relative; height: 220px; }
-  .emoji-row { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .8rem; }
-  .emoji-item { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: .4rem .7rem; font-size: 1.1rem; display: flex; align-items: center; gap: .4rem; }
-  .emoji-count { font-size: .75rem; color: var(--muted); }
-  .badge { background: var(--accent); color: white; border-radius: 4px; padding: 1px 6px; font-size: .75rem; }
-  ul { list-style: none; padding: 0; }
-  li { padding: .4rem 0; border-bottom: 1px solid var(--border); color: var(--text); font-size: .9rem; }
-  li:last-child { border-bottom: none; }
-  .affection-bar { height: 8px; border-radius: 4px; background: var(--border); margin-top: .5rem; overflow: hidden; }
-  .affection-fill { height: 100%; border-radius: 4px; background: var(--accent2); transition: width .5s; }
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-  footer { color: var(--muted); font-size: .8rem; margin-top: 3rem; text-align: center; }
-  @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Layout ── */
+  .wrap { max-width: 860px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+
+  /* ── Hero header ── */
+  .hero {
+    position: relative;
+    padding: 3rem 2.5rem 2.5rem;
+    background: linear-gradient(135deg, #12121e 0%, #1a1030 50%, #120a20 100%);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, rgba(124,106,247,0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 20%;
+    width: 300px; height: 200px;
+    background: radial-gradient(circle, rgba(247,106,138,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: .75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    color: var(--accent);
+    margin-bottom: .6rem;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: .5rem;
+  }
+  .hero-meta {
+    font-size: .85rem;
+    color: var(--muted2);
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.2rem;
+    margin-top: .8rem;
+  }
+  .hero-meta span { display: flex; align-items: center; gap: .3rem; }
+
+  /* ── Section title ── */
+  .section-title {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  /* ── Stat grid ── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: .9rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1.3rem 1.4rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s, transform .2s;
+  }
+  .stat-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .stat-card.purple::before { background: var(--purple-glow); opacity: 1; }
+  .stat-card.pink::before   { background: var(--pink-glow);   opacity: 1; }
+  .stat-icon { font-size: 1.4rem; margin-bottom: .5rem; display: block; }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -.03em;
+    line-height: 1;
+    color: var(--text);
+  }
+  .stat-card.purple .stat-value { color: var(--accent); }
+  .stat-card.pink   .stat-value { color: var(--accent2); }
+  .stat-card.blue   .stat-value { color: var(--accent3); }
+  .stat-label {
+    font-size: .78rem;
+    color: var(--muted2);
+    margin-top: .35rem;
+    font-weight: 500;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.6rem;
+  }
+  .chart-card { margin-bottom: 1.5rem; }
+  .chart-wrap { position: relative; height: 230px; margin-top: 1rem; }
+
+  /* ── Two col ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  /* ── Emoji pills ── */
+  .emoji-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-top: 1rem;
+  }
+  .emoji-pill {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 999px;
+    padding: .35rem .85rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: 1.05rem;
+    transition: transform .15s;
+  }
+  .emoji-pill:hover { transform: scale(1.08); }
+  .emoji-count { font-size: .72rem; color: var(--muted2); font-weight: 600; }
+
+  /* ── Verbal tics ── */
+  .tic-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .55rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .88rem;
+  }
+  .tic-row:last-child { border-bottom: none; }
+  .tic-phrase { color: var(--text); font-weight: 500; }
+  .tic-bar-wrap { flex: 1; margin: 0 .8rem; height: 4px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+  .tic-bar { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .tic-count { font-size: .75rem; color: var(--muted); white-space: nowrap; }
+
+  /* ── Affection ── */
+  .aff-row { margin-bottom: 1.1rem; }
+  .aff-row:last-child { margin-bottom: 0; }
+  .aff-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: .85rem;
+    margin-bottom: .4rem;
+    font-weight: 500;
+  }
+  .aff-pct { color: var(--accent2); font-weight: 700; }
+  .aff-track { height: 6px; border-radius: 3px; background: var(--border2); overflow: hidden; }
+  .aff-fill { height: 100%; border-radius: 3px; transition: width .8s cubic-bezier(.4,0,.2,1); }
+
+  /* ── Silences timeline ── */
+  .silence-list { margin-top: .8rem; }
+  .silence-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: .7rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .85rem;
+  }
+  .silence-item:last-child { border-bottom: none; }
+  .silence-days {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--accent2);
+    min-width: 3rem;
+    line-height: 1;
+  }
+  .silence-days small { font-size: .6rem; color: var(--muted); font-weight: 500; display: block; }
+  .silence-detail { color: var(--muted2); line-height: 1.5; }
+  .silence-detail strong { color: var(--text); font-weight: 600; }
+  .resumed-badge {
+    display: inline-block;
+    background: rgba(124,106,247,.15);
+    color: var(--accent);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: .72rem;
+    font-weight: 600;
+    margin-top: .2rem;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 3rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: .8rem;
+  }
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .footer a:hover { text-decoration: underline; }
+  .install-hint {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: .4rem 1rem;
+    font-family: 'Courier New', monospace;
+    font-size: .8rem;
+    color: var(--accent3);
+    margin: .7rem auto 0;
+  }
+
+  @media (max-width: 600px) {
+    .two-col { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .hero { padding: 2rem 1.4rem; }
+  }
 </style>
 </head>
 <body>
+<div class="wrap">
 
-<h1>🪞 demo_chat</h1>
-<p class="subtitle">Jordan &nbsp;·&nbsp; Jan 2023 → Apr 2024 &nbsp;·&nbsp; Generated 2026-03-23 18:11</p>
-
-<div class="grid">
-  <div class="card">
-    <div class="stat">285</div>
-    <div class="stat-label">Total messages</div>
-  </div>
-  <div class="card">
-    <div class="stat">1.01×</div>
-    <div class="stat-label">Your messages vs theirs</div>
-  </div>
-  <div class="card">
-    <div class="stat">22h</div>
-    <div class="stat-label">Peak activity hour</div>
-  </div>
-  <div class="card">
-    <div class="stat">306</div>
-    <div class="stat-label">Unique words used</div>
-  </div>
-</div>
-
-<!-- Message drift chart -->
-<div class="chart-card">
-  <h2>Message balance over time</h2>
-  <p class="subtitle" style="margin-bottom:1rem">Your % of messages per month — 50% = perfectly equal</p>
-  <div class="chart-wrap"><canvas id="driftChart"></canvas></div>
-</div>
-
-<div class="two-col">
-
-  <!-- Emojis -->
-  <div class="card">
-    <h2>Your emoji signature</h2>
-    <div class="emoji-row" id="emojiRow"></div>
-  </div>
-
-  <!-- Verbal tics -->
-  <div class="card">
-    <h2>Your verbal tics</h2>
-    <ul id="ticsList"></ul>
-  </div>
-
-</div>
-
-<div class="two-col" style="margin-top:1.2rem">
-
-  <!-- Affection -->
-  <div class="card">
-    <h2>Emotional tone</h2>
-    <p style="font-size:.9rem;color:var(--muted);margin-bottom:.8rem">% of messages with affection markers</p>
-    <div style="margin-bottom:.8rem">
-      <div style="display:flex;justify-content:space-between;font-size:.85rem"><span>You</span><span>0.0%</span></div>
-      <div class="affection-bar"><div class="affection-fill" style="width:0.0%"></div></div>
-    </div>
-    <div>
-      <div style="display:flex;justify-content:space-between;font-size:.85rem"><span>Alex</span><span>0.0%</span></div>
-      <div class="affection-bar"><div class="affection-fill" style="width:0.0%;background:var(--accent)"></div></div>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">chatself · conversation analysis</div>
+    <h1>demo_chat</h1>
+    <div class="hero-meta">
+      <span>👤 Jordan</span>
+      <span>📅 Jan 2023 → Apr 2024</span>
+      <span>🕐 generated 2026-03-23 18:14</span>
     </div>
   </div>
 
-  <!-- Silence gaps -->
-  <div class="card">
-    <h2>Longest silences</h2>
-    <ul><li><strong>110 days</strong> &nbsp; 2023-06-13 → 2023-10-01 &nbsp; <span class='badge'>resumed by Jordan</span></li><li><strong>98 days</strong> &nbsp; 2023-03-06 → 2023-06-12 &nbsp; <span class='badge'>resumed by Jordan</span></li><li><strong>79 days</strong> &nbsp; 2023-10-21 → 2024-01-08 &nbsp; <span class='badge'>resumed by Alex</span></li><li><strong>48 days</strong> &nbsp; 2024-02-14 → 2024-04-03 &nbsp; <span class='badge'>resumed by Alex</span></li><li><strong>36 days</strong> &nbsp; 2023-01-05 → 2023-02-10 &nbsp; <span class='badge'>resumed by Jordan</span></li></ul>
+  <!-- Stats -->
+  <div class="section-title">At a glance</div>
+  <div class="stat-grid">
+    <div class="stat-card purple">
+      <span class="stat-icon">💬</span>
+      <div class="stat-value">285</div>
+      <div class="stat-label">total messages</div>
+    </div>
+    <div class="stat-card pink">
+      <span class="stat-icon">⚖️</span>
+      <div class="stat-value">1.01×</div>
+      <div class="stat-label">your msgs vs theirs</div>
+    </div>
+    <div class="stat-card blue">
+      <span class="stat-icon">🌙</span>
+      <div class="stat-value">22h</div>
+      <div class="stat-label">peak activity hour</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">📖</span>
+      <div class="stat-value">306</div>
+      <div class="stat-label">unique words used</div>
+    </div>
   </div>
 
-</div>
+  <!-- Drift chart -->
+  <div class="card chart-card">
+    <div class="section-title">Who talked more — month by month</div>
+    <div style="font-size:.82rem;color:var(--muted2)">Your share of the conversation. The dashed line is 50/50. When it dips, they were carrying it. When it climbs, you were.</div>
+    <div class="chart-wrap"><canvas id="driftChart"></canvas></div>
+  </div>
 
-<footer>chatself · open source · your data stays on your machine</footer>
+  <!-- Emojis + Tics -->
+  <div class="two-col">
+    <div class="card">
+      <div class="section-title">Your emoji signature</div>
+      <div class="emoji-grid" id="emojiRow"></div>
+    </div>
+    <div class="card">
+      <div class="section-title">Your verbal tics</div>
+      <div id="ticsList" style="margin-top:.8rem"></div>
+    </div>
+  </div>
+
+  <!-- Affection + Silences -->
+  <div class="two-col" style="margin-top:1rem">
+    <div class="card">
+      <div class="section-title">Emotional tone</div>
+      <div style="font-size:.78rem;color:var(--muted2);margin-bottom:1rem">% of messages with affection markers (💙 ❤️ miss, love, 😊…)</div>
+      <div class="aff-row">
+        <div class="aff-header"><span>You</span><span class="aff-pct">0.0%</span></div>
+        <div class="aff-track"><div class="aff-fill" style="width:0.0%;background:linear-gradient(90deg,var(--accent2),#ff9a9e)"></div></div>
+      </div>
+      <div class="aff-row">
+        <div class="aff-header"><span>Alex</span><span class="aff-pct">0.0%</span></div>
+        <div class="aff-track"><div class="aff-fill" style="width:0.0%;background:linear-gradient(90deg,var(--accent),#a78bfa)"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Longest silences</div>
+      <div class="silence-list"><div class='silence-item'><div class='silence-days'>110<small>days</small></div><div class='silence-detail'><strong>2023-06-13</strong> → <strong>2023-10-01</strong><br><span class='resumed-badge'>↩ resumed by Jordan</span></div></div><div class='silence-item'><div class='silence-days'>98<small>days</small></div><div class='silence-detail'><strong>2023-03-06</strong> → <strong>2023-06-12</strong><br><span class='resumed-badge'>↩ resumed by Jordan</span></div></div><div class='silence-item'><div class='silence-days'>79<small>days</small></div><div class='silence-detail'><strong>2023-10-21</strong> → <strong>2024-01-08</strong><br><span class='resumed-badge'>↩ resumed by Alex</span></div></div><div class='silence-item'><div class='silence-days'>48<small>days</small></div><div class='silence-detail'><strong>2024-02-14</strong> → <strong>2024-04-03</strong><br><span class='resumed-badge'>↩ resumed by Alex</span></div></div><div class='silence-item'><div class='silence-days'>36<small>days</small></div><div class='silence-detail'><strong>2023-01-05</strong> → <strong>2023-02-10</strong><br><span class='resumed-badge'>↩ resumed by Jordan</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>made with <a href="https://github.com/Khavel/chatself">chatself</a> · your data never leaves your machine</div>
+    <div class="install-hint">pip install chatself</div>
+  </div>
+
+</div><!-- /wrap -->
 
 <script>
 const drift = [{"month": "2023-01", "total": 36, "mine": 19, "theirs": 17, "my_pct": 52.8, "balance": 2.8}, {"month": "2023-02", "total": 30, "mine": 15, "theirs": 15, "my_pct": 50.0, "balance": 0.0}, {"month": "2023-03", "total": 35, "mine": 19, "theirs": 16, "my_pct": 54.3, "balance": 4.3}, {"month": "2023-06", "total": 21, "mine": 9, "theirs": 12, "my_pct": 42.9, "balance": -7.1}, {"month": "2023-10", "total": 68, "mine": 35, "theirs": 33, "my_pct": 51.5, "balance": 1.5}, {"month": "2024-01", "total": 39, "mine": 18, "theirs": 21, "my_pct": 46.2, "balance": -3.8}, {"month": "2024-02", "total": 23, "mine": 11, "theirs": 12, "my_pct": 47.8, "balance": -2.2}, {"month": "2024-04", "total": 33, "mine": 17, "theirs": 16, "my_pct": 51.5, "balance": 1.5}];
 const emojisData = [{"emoji": "\ud83d\udc99", "name": "blue_heart", "count": 7}, {"emoji": "\ud83d\ude0a", "name": "smiling_face_with_smiling_eyes", "count": 3}, {"emoji": "\ud83d\udd25", "name": "fire", "count": 1}, {"emoji": "\ud83e\udee1", "name": "saluting_face", "count": 1}, {"emoji": "\ud83d\ude42", "name": "slightly_smiling_face", "count": 1}, {"emoji": "\ud83d\ude02", "name": "face_with_tears_of_joy", "count": 1}];
 const ticsData = [["that s", 8], ["s a", 5], ["it s", 4], ["s the", 4], ["this is", 4], ["that s a", 4], ["how s", 3], ["the new", 3], ["how s the", 3], ["wasn t", 3]];
 
-// Drift chart
+// ── Drift chart
 const labels = drift.map(d => d.month);
 const myPct  = drift.map(d => d.my_pct);
 
-new Chart(document.getElementById('driftChart'), {
+const ctx = document.getElementById('driftChart').getContext('2d');
+const grad = ctx.createLinearGradient(0, 0, 0, 230);
+grad.addColorStop(0,   'rgba(124,106,247,0.25)');
+grad.addColorStop(1,   'rgba(124,106,247,0)');
+
+new Chart(ctx, {
   type: 'line',
   data: {
     labels,
@@ -127,46 +389,74 @@ new Chart(document.getElementById('driftChart'), {
         label: 'Your %',
         data: myPct,
         borderColor: '#7c6af7',
-        backgroundColor: 'rgba(124,106,247,0.1)',
+        backgroundColor: grad,
         fill: true,
-        tension: 0.4,
-        pointRadius: 3,
+        tension: 0.45,
+        pointRadius: 4,
+        pointBackgroundColor: '#7c6af7',
+        pointBorderColor: '#080810',
+        pointBorderWidth: 2,
+        borderWidth: 2.5,
       },
       {
-        label: '50% (equal)',
+        label: '50% equal',
         data: labels.map(() => 50),
-        borderColor: '#444',
-        borderDash: [4, 4],
+        borderColor: 'rgba(255,255,255,0.12)',
+        borderDash: [5, 5],
         pointRadius: 0,
-        borderWidth: 1,
+        borderWidth: 1.5,
+        fill: false,
       }
     ]
   },
   options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { labels: { color: '#888' } } },
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { labels: { color: '#6b6b8a', font: { size: 11 } } },
+      tooltip: {
+        backgroundColor: '#1a1a2e',
+        borderColor: '#ffffff18',
+        borderWidth: 1,
+        titleColor: '#f0f0fa',
+        bodyColor: '#9090b0',
+        padding: 10,
+        callbacks: { label: ctx => ` ${ctx.parsed.y}% of messages` }
+      }
+    },
     scales: {
-      x: { ticks: { color: '#666', maxTicksLimit: 8 }, grid: { color: '#222' } },
-      y: { ticks: { color: '#666', callback: v => v + '%' }, grid: { color: '#222' }, min: 0, max: 100 }
+      x: { ticks: { color: '#4a4a6a', font: { size: 11 }, maxTicksLimit: 10 }, grid: { color: '#ffffff06' } },
+      y: {
+        ticks: { color: '#4a4a6a', font: { size: 11 }, callback: v => v + '%' },
+        grid: { color: '#ffffff06' },
+        min: 0, max: 100
+      }
     }
   }
 });
 
-// Emojis
+// ── Emojis
 const emojiRow = document.getElementById('emojiRow');
 emojisData.forEach(e => {
   const el = document.createElement('div');
-  el.className = 'emoji-item';
-  el.innerHTML = `<span>${e.emoji}</span><span class="emoji-count">${e.count}</span>`;
+  el.className = 'emoji-pill';
+  el.innerHTML = `<span>${e.emoji}</span><span class="emoji-count">${e.count}×</span>`;
   emojiRow.appendChild(el);
 });
 
-// Verbal tics
+// ── Verbal tics
 const ticsList = document.getElementById('ticsList');
+const maxCount = ticsData.length ? ticsData[0][1] : 1;
 ticsData.forEach(([phrase, count]) => {
-  const li = document.createElement('li');
-  li.innerHTML = `<strong>${phrase}</strong> <span class="badge" style="float:right">${count}×</span>`;
-  ticsList.appendChild(li);
+  const pct = Math.round((count / maxCount) * 100);
+  const row = document.createElement('div');
+  row.className = 'tic-row';
+  row.innerHTML = `
+    <span class="tic-phrase">${phrase}</span>
+    <div class="tic-bar-wrap"><div class="tic-bar" style="width:${pct}%"></div></div>
+    <span class="tic-count">${count}×</span>`;
+  ticsList.appendChild(row);
 });
 </script>
 </body>
