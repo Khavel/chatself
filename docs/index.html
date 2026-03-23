@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>chatself — sample_chat</title>
+<title>chatself — demo_chat</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
   :root {
@@ -38,24 +38,24 @@
 </head>
 <body>
 
-<h1>🪞 sample_chat</h1>
-<p class="subtitle">Jordan &nbsp;·&nbsp; Jan 2024 → Jan 2024 &nbsp;·&nbsp; Generated 2026-03-23 18:02</p>
+<h1>🪞 demo_chat</h1>
+<p class="subtitle">Jordan &nbsp;·&nbsp; Jan 2023 → Apr 2024 &nbsp;·&nbsp; Generated 2026-03-23 18:11</p>
 
 <div class="grid">
   <div class="card">
-    <div class="stat">25</div>
+    <div class="stat">285</div>
     <div class="stat-label">Total messages</div>
   </div>
   <div class="card">
-    <div class="stat">1.18×</div>
+    <div class="stat">1.01×</div>
     <div class="stat-label">Your messages vs theirs</div>
   </div>
   <div class="card">
-    <div class="stat">10h</div>
+    <div class="stat">22h</div>
     <div class="stat-label">Peak activity hour</div>
   </div>
   <div class="card">
-    <div class="stat">47</div>
+    <div class="stat">306</div>
     <div class="stat-label">Unique words used</div>
   </div>
 </div>
@@ -94,7 +94,7 @@
       <div class="affection-bar"><div class="affection-fill" style="width:0.0%"></div></div>
     </div>
     <div>
-      <div style="display:flex;justify-content:space-between;font-size:.85rem"><span>Sara</span><span>0.0%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:.85rem"><span>Alex</span><span>0.0%</span></div>
       <div class="affection-bar"><div class="affection-fill" style="width:0.0%;background:var(--accent)"></div></div>
     </div>
   </div>
@@ -102,7 +102,7 @@
   <!-- Silence gaps -->
   <div class="card">
     <h2>Longest silences</h2>
-    <ul><li>No significant gaps</li></ul>
+    <ul><li><strong>110 days</strong> &nbsp; 2023-06-13 → 2023-10-01 &nbsp; <span class='badge'>resumed by Jordan</span></li><li><strong>98 days</strong> &nbsp; 2023-03-06 → 2023-06-12 &nbsp; <span class='badge'>resumed by Jordan</span></li><li><strong>79 days</strong> &nbsp; 2023-10-21 → 2024-01-08 &nbsp; <span class='badge'>resumed by Alex</span></li><li><strong>48 days</strong> &nbsp; 2024-02-14 → 2024-04-03 &nbsp; <span class='badge'>resumed by Alex</span></li><li><strong>36 days</strong> &nbsp; 2023-01-05 → 2023-02-10 &nbsp; <span class='badge'>resumed by Jordan</span></li></ul>
   </div>
 
 </div>
@@ -110,9 +110,9 @@
 <footer>chatself · open source · your data stays on your machine</footer>
 
 <script>
-const drift = [{"month": "2024-01", "total": 25, "mine": 13, "theirs": 12, "my_pct": 52.0, "balance": 2.0}];
-const emojisData = [{"emoji": "\ud83d\ude04", "name": "grinning_face_with_smiling_eyes", "count": 2}, {"emoji": "\ud83d\ude05", "name": "grinning_face_with_sweat", "count": 1}];
-const ticsData = [["looks amazing", 2], ["works for me", 2], ["but worth it", 2], ["hey not", 1], ["not sure", 1], ["sure yet", 1], ["yet maybe", 1], ["maybe hiking", 1], ["hey not sure", 1], ["not sure yet", 1]];
+const drift = [{"month": "2023-01", "total": 36, "mine": 19, "theirs": 17, "my_pct": 52.8, "balance": 2.8}, {"month": "2023-02", "total": 30, "mine": 15, "theirs": 15, "my_pct": 50.0, "balance": 0.0}, {"month": "2023-03", "total": 35, "mine": 19, "theirs": 16, "my_pct": 54.3, "balance": 4.3}, {"month": "2023-06", "total": 21, "mine": 9, "theirs": 12, "my_pct": 42.9, "balance": -7.1}, {"month": "2023-10", "total": 68, "mine": 35, "theirs": 33, "my_pct": 51.5, "balance": 1.5}, {"month": "2024-01", "total": 39, "mine": 18, "theirs": 21, "my_pct": 46.2, "balance": -3.8}, {"month": "2024-02", "total": 23, "mine": 11, "theirs": 12, "my_pct": 47.8, "balance": -2.2}, {"month": "2024-04", "total": 33, "mine": 17, "theirs": 16, "my_pct": 51.5, "balance": 1.5}];
+const emojisData = [{"emoji": "\ud83d\udc99", "name": "blue_heart", "count": 7}, {"emoji": "\ud83d\ude0a", "name": "smiling_face_with_smiling_eyes", "count": 3}, {"emoji": "\ud83d\udd25", "name": "fire", "count": 1}, {"emoji": "\ud83e\udee1", "name": "saluting_face", "count": 1}, {"emoji": "\ud83d\ude42", "name": "slightly_smiling_face", "count": 1}, {"emoji": "\ud83d\ude02", "name": "face_with_tears_of_joy", "count": 1}];
+const ticsData = [["that s", 8], ["s a", 5], ["it s", 4], ["s the", 4], ["this is", 4], ["that s a", 4], ["how s", 3], ["the new", 3], ["how s the", 3], ["wasn t", 3]];
 
 // Drift chart
 const labels = drift.map(d => d.month);
